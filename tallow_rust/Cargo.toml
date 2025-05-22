@@ -1,0 +1,15 @@
+[package]
+name = "tallow_rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+systemd = "0.10" # For systemd journal interaction
+serde_json = "1.0" # For JSON parsing
+regex = "1.5" # For regular expressions
+toml = "0.8" # For TOML configuration file parsing
+log = "0.4" # Logging facade
+env_logger = "0.11" # Logging implementation
+serde = { version = "1.0", features = ["derive"] } # Required by serde_json and toml

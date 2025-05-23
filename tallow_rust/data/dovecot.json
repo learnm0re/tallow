@@ -1,0 +1,22 @@
+[
+  {
+    "filter": "_COMM=dovecot",
+    "items": [
+      {
+        "pattern": "service=auth, event=failed, rip=([0-9a-z:.]+), lip=",
+        "score": 1.0,
+        "ban": 0
+      },
+      {
+        "pattern": "service=imap-login, event=failed, rip=([0-9a-z:.]+), lip=",
+        "score": 1.0,
+        "ban": 0
+      },
+      {
+        "pattern": "service=pop3-login, event=failed, rip=([0-9a-z:.]+), lip=",
+        "score": 1.0,
+        "ban": 0
+      }
+    ]
+  }
+]

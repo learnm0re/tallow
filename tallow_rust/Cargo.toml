@@ -13,3 +13,4 @@ toml = "0.8" # For TOML configuration file parsing
 log = "0.4" # Logging facade
 env_logger = "0.11" # Logging implementation
 serde = { version = "1.0", features = ["derive"] } # Required by serde_json and toml
+signal-hook = "0.3" # For signal handling

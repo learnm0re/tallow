@@ -1,0 +1,26 @@
+# Default configuration for Tallow-Rust
+# See tallow_rust.conf(5) for more details on options.
+
+# Path to iptables and ipset utilities
+ipt_path = "/usr/sbin"
+
+# Path to firewall-cmd utility
+fwcmd_path = "/usr/sbin"
+
+# Default expiration time in seconds for entries in ipsets
+# Also used for pruning inactive IPs from internal tracking
+expires = 3600 # 1 hour
+
+# List of IP addresses that should never be blocked
+whitelist = ["127.0.0.1", "::1"]
+
+# Enable or disable IPv6 support
+has_ipv6 = true
+
+# If true, Tallow-Rust will not create or modify any firewall rules or ipsets.
+# It will only perform logging and internal IP tracking.
+nocreate = false
+
+# Path to the directory containing JSON pattern files (e.g., sshd.json, dovecot.json)
+# This path will be used when the feature is fully implemented in config loading.
+patterns_path = "/etc/tallow/patterns"

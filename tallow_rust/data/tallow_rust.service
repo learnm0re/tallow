@@ -1,0 +1,23 @@
+[Unit]
+Description=Tallow IP Blocker (Rust version)
+After=network.target systemd-journald.service firewalld.service
+
+[Service]
+Type=simple
+ExecStart=@SBINDIR@/tallow_rust
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+NoNewPrivileges=true
+# Add other capabilities if strictly needed, e.g., CAP_NET_ADMIN, CAP_NET_RAW if ipset/iptables need them directly
+# However, running as root usually covers this.
+# Consider User= and Group= if not running as root and capabilities are used.
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,47 @@
+[
+  {
+    "filter": "_COMM=sshd",
+    "items": [
+      {
+        "pattern": "MESSAGE=Failed password for invalid user .* from ([0-9a-z:.]+) port \\d+ ssh2",
+        "score": 2.5,
+        "ban": 0
+      },
+      {
+        "pattern": "MESSAGE=Failed password for .* from ([0-9a-z:.]+) port \\d+ ssh2",
+        "score": 1.0,
+        "ban": 0
+      },
+      {
+        "pattern": "MESSAGE=Connection closed by authenticating user .* ([0-9a-z:.]+) port \\d+ \\[preauth\\]",
+        "score": 0,
+        "ban": 0
+      },
+      {
+        "pattern": "MESSAGE=Connection closed by ([0-9a-z:.]+) port \\d+ \\[preauth\\]",
+        "score": 2.0,
+        "ban": 0
+      },
+      {
+        "pattern": "MESSAGE=Connection reset by ([0-9a-z:.]+) port \\d+ \\[preauth\\]",
+        "score": 2.0,
+        "ban": 0
+      },
+      {
+        "pattern": "MESSAGE=Received disconnect from ([0-9a-z:.]+) port \\d+:\\d+: Too many authentication failures \\[preauth\\]",
+        "score": 0,
+        "ban": 1
+      },
+      {
+        "pattern": "MESSAGE=Unable to negotiate with ([0-9a-z:.]+) port \\d+: no matching host key type found. Their offer: ssh-rsa,ssh-dss \\[preauth\\]",
+        "score": 1.0,
+        "ban": 0
+      },
+      {
+        "pattern": "MESSAGE=Unable to negotiate with ([0-9a-z:.]+) port \\d+: no matching key exchange method found. Their offer: .* \\[preauth\\]",
+        "score": 1.0,
+        "ban": 0
+      }
+    ]
+  }
+]

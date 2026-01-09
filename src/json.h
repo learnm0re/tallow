@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2019 Intel Corporation
  * Authors:
- *     Auke Kok <auke-jan.h.kok@intel.com>
+ *     Auke Kok <sofar@foo-projects.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

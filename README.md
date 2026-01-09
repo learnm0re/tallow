@@ -6,30 +6,35 @@ Tallow is a fail2ban/lard replacement that uses systemd's native
 journal API to scan for attempted ssh logins, and issues temporary
 IP bans for clients that violate certain login patterns.
 
-Author: Auke Kok <auke-jan.h.kok@intel.com>
+Tallow can create IP blocks for any service that the journal API
+allows filtering messages, as long as you can create a pattern
+that extracts the IP address (ipv4 or ipv6) properly using regex
+syntax (using pcre(1)).
+
+Author: Auke Kok <sofar@foo-projects.org>
+
+DISCLAIMER: I originally created this project at Intel Corp. as a
+full-time employee. I am no longer employed by Intel. I am currently
+maintaining this project in my free time.
 
 
 How it works
 ============
 
-Tallow attaches to the journal and subscribes to messages from
-/usr/sbin/sshd. The messages are matched against rules and the IP
-address is extracted from the message.  For each IP address that is
-extracted, the last timestamp and count is kept. Once the count exceeds
-a threshold, the offending IP address is added to an ipset and blocked 
-with a corresponding firewall rule. It will use firewalld or 
-iptables / ip6tables.
+Tallow attaches to the journal and subscribes to messages from the
+SSH service (or others, if configured). The messages are matched
+against patterns and the IP addresses are extracted from the message.
+For each IP address that matches a pattern, a score is assigned,
+the last timestamp of the match. Once the total score exceeds a given
+threshold, the offending IP address is added to an IP address set and
+blocked with a corresponding firewall rule. It will use firewalld,
+netfilter, or iptables / ip6tables.
 
 The timestamp is kept for pruning. Records are pruned from the list
 if the IP address hasn't been seen by tallow for longer than the
 threshold. If the IP was blocked and the threshold was exceeded,
 the IP is unblocked. If the threshold was never reached, the record
 is removed as well.
-
-Pruning is done automatically after incoming messages are processed,
-so there is a chance that if no messages arrive, that IP addresses
-remain blocked for longer than the default blocking period.
-
 
 
 Motivation
@@ -41,11 +46,10 @@ dynamically on certain syslog messages, and many types of actions
 can be imagined. This is trivial to implement on systems that use
 the journal API, and often doesn't take much code at all.
 
-The journal is attached to and forwarder to the end. We place a
+The journal is attached to, and forwarded to the end. We place a
 simple message filter, and then process each incoming message. For
 more information check out the sd-journal manual pages, which contain
 example code that demonstrates almost the exact same code flow.
-
 
 
 Security

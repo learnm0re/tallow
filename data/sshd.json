@@ -1,6 +1,6 @@
 [
   {
-    "filter": "SYSLOG_IDENTIFIER=sshd",
+    "filter": [ "SYSLOG_IDENTIFIER=sshd", "SYSLOG_IDENTIFIER=sshd-session" ],
     "items": [
       {
         "ban": 0,

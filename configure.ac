@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.64])
-AC_INIT([tallow], [21], [auke-jan.h.kok@intel.com])
+AC_PREREQ([2.72])
+AC_INIT([tallow],[22],[sofar@foo-projects.org])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror -Wno-portability silent-rules subdir-objects color-tests
 	no-dist-gzip dist-xz])
 AC_CONFIG_FILES([Makefile])
@@ -24,8 +24,7 @@ AC_SUBST(LIBSYSTEMD_LIBS)
 AC_SUBST(LIBSYSTEMD_JOURNAL_CFLAGS)
 AC_SUBST(LIBSYSTEMD_JOURNAL_LIBS)
 
-AC_ARG_WITH([systemdsystemunitdir], AC_HELP_STRING([--with-systemdsystemunitdir=DIR],
-	[path to systemd system service directory]), [path_systemdsystemunit=${withval}],
+AC_ARG_WITH([systemdsystemunitdir], AS_HELP_STRING([--with-systemdsystemunitdir=DIR],[path to systemd system service directory]), [path_systemdsystemunit=${withval}],
 	[path_systemdsystemunit="`$PKG_CONFIG --variable=systemdsystemunitdir systemd`"])
 if (test -n "${path_systemdsystemunit}"); then
 SYSTEMD_SYSTEMUNITDIR="${path_systemdsystemunit}"
@@ -34,6 +33,7 @@ fi
 
 AC_CHECK_HEADERS([stdlib.h stdio.h string.h stdarg.h limits.h sys/time.h])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 data/tallow.service
 ])
+AC_OUTPUT

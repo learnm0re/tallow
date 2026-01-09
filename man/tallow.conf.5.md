@@ -1,25 +1,49 @@
 % TALLOW.CONF(5)
-% Auke Kok `<auke-jan.h.kok@intel.com>`
+% Auke Kok `<sofar@foo-projects.org>`
 
 # tallow.conf
 
 The tallow configuration file
 
-# NAME
+## NAME
 
 tallow.conf - Tallow daemon configuration file
 
-# SYNOPSIS
+## SYNOPSIS
 
 `/etc/tallow.conf`
 
-# DESCRIPTION
+## DESCRIPTION
 
 This file is read on startup by the tallow(1) daemon, and can
 be used to provide options to the tallow daemon. If not present,
 tallow will operate with built-in defaults.
 
-# OPTIONS
+## OPTIONS
+
+`backend`=`nft|iptables|firewall-cmd`
+Tallow can operate using 3 different methods to block IP
+addresses. Using this option forces tallow to use one of the supported
+backends.
+
+The original version only supported using iptables(1)/ip6tables(1)
+and ipset(1). This is the `iptables` backend.
+
+Later, support for firewall-cmd(1) was added. firewall-cmd itself
+uses ipsets and nftables or iptables.
+
+The `nft` backend uses `netfilter` or `nft` to setup tables and IP
+address sets.
+
+All these three backends work relatively well with or without
+firewall-cmd and other firewalls, and have slightly different
+implications for rule ordering and setup and teardown rules. The
+simplest and most reliable backend is `nft` and this is the current
+default backend choice, even if firewalld(1) is running.
+
+Tallow will make sure that `nft` is present and working before using
+it, and will try to use firewall-cmd before falling back to iptables
+as a backend.
 
 `fwcmd_path`=`<string>`
 Specifies the location of the ipset(1) firewall-cmd(1) programs. By
@@ -29,6 +53,10 @@ default, tallow will look in "/usr/sbin" for them.
 Specifies the location of the ipset(1) program and iptables(1) or
 ip6tables(1) programs. By default, tallow will look in "/usr/sbin"
 for them.
+
+`nft_path`=`<string>`
+Specifies the location of the nft(1) program. By default, tallow will
+look in "/usr/sbin" for it.
 
 `expires`=`<int>`
 The number of seconds that IP addresses are blocked for. Note that
@@ -87,6 +115,16 @@ Use the following commands if you're using firewalld(1):
 
   ```
 
-# SEE ALSO
+Use the following commands if you're using nft(1):
+
+```
+  nft add table inet tallow_table { chain tallow_chain { type filter hook input priority filter\; policy accept\; }\; }
+  nft add set inet tallow_table tallow_set { type ipv4_addr\; timeout 3600s \;
+  nft add rule inet tallow_table tallow_chain ip saddr @tallow_set drop
+  nft add set inet tallow_table tallow6_set { type ipv6_addr\; timeout 3600s \;}
+  nft add rule inet tallow_table tallow_chain ip6 saddr @tallow6_set drop
+  ```
+
+## SEE ALSO
 
 tallow(1), tallow.patterns(5)

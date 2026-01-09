@@ -3,7 +3,7 @@
  *
  * (C) Copyright 2019 Intel Corporation
  * Authors:
- *     Auke Kok <auke-jan.h.kok@intel.com>
+ *     Auke Kok <sofar@foo-projects.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,15 +29,14 @@
 #include "data.h"
 
 static const char *s_pattern;
-static const char *s_filter;
 static int s_ban;
 static double s_score;
-static bool g_filter, g_ban, g_score, g_pattern = false;
+static bool g_ban, g_score, g_pattern = false;
 
 static int json_parse(json_object *ob)
 {
 	int i, count = 0;
-	bool l_filter, l_ban, l_score, l_pattern = false;
+	bool l_ban, l_score, l_pattern = false;
 
 	json_object_object_foreach(ob, key, val) {
 		enum json_type type;
@@ -67,8 +66,7 @@ static int json_parse(json_object *ob)
 			break;
 		case json_type_string:
 			if (strcmp(key, "filter") == 0) {
-				l_filter = g_filter = true;
-				s_filter = json_object_get_string(val);
+				filter_add(json_object_get_string(val));
 			} else if (strcmp(key, "pattern") == 0) {
 				l_pattern = g_pattern = true;
 				s_pattern = json_object_get_string(val);
@@ -78,12 +76,20 @@ static int json_parse(json_object *ob)
 			}
 			break;
 		case json_type_array:
-			ob = json_object_object_get(ob, key);
-			int len = json_object_array_length(ob);
-			json_object *val;
-			for (i = 0; i < len; i++) {
-				val = json_object_array_get_idx(ob, i);
-				count += json_parse(val);
+			if (strcmp(key, "filter") == 0) {
+				/* flat array with filter strings */
+				int len = json_object_array_length(val);
+				for (i = 0; i < len; i++)
+					filter_add(json_object_get_string(json_object_array_get_idx(val, i)));
+			} else {
+				/* expect objects in the array here */
+				ob = json_object_object_get(ob, key);
+				int len = json_object_array_length(ob);
+				json_object *val;
+				for (i = 0; i < len; i++) {
+					val = json_object_array_get_idx(ob, i);
+					count += json_parse(val);
+				}
 			}
 			break;
 		case json_type_object:
@@ -94,11 +100,7 @@ static int json_parse(json_object *ob)
 	}
 
 	/* check and finish if can */
-	if (g_score && g_ban && g_pattern && g_filter) {
-#ifdef DEBUG
-		fprintf(stderr, "Adding: %s %s %d %lf\n", s_filter, s_pattern, s_ban, s_score);
-#endif
-		filter_add(s_filter);
+	if (g_score && g_ban && g_pattern) {
 		pattern_add(s_pattern, s_ban, s_score);
 		count++;
 	}
@@ -110,8 +112,6 @@ static int json_parse(json_object *ob)
 		l_ban = g_ban = false;
 	} else if (l_pattern) {
 		l_pattern = g_pattern = false;
-	} else if (l_filter) {
-		l_filter = g_filter = false;
 	}
 
 	return (count);

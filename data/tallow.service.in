@@ -1,6 +1,7 @@
 
 [Unit]
 Description=Tallow Service
+After=firewalld.service
 
 [Service]
 ExecStart=@prefix@/sbin/tallow
